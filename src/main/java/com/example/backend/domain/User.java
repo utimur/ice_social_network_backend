@@ -1,14 +1,17 @@
 package com.example.backend.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "usr")
+@JsonAutoDetect
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String username;

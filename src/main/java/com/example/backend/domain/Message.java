@@ -1,6 +1,7 @@
 package com.example.backend.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,12 +12,24 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table
 @NoArgsConstructor
+@JsonAutoDetect
 public class Message {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     @NotNull
     String text;
+
+
+    Long authorId;
+
+    public Long getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(Long authorId) {
+        this.authorId = authorId;
+    }
 
     public Long getId() {
         return id;

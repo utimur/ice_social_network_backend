@@ -19,7 +19,7 @@ public class UserController {
     public ResponseEntity registration(@RequestBody User user){
         User userDb = userRepo.findByUsername(user.getUsername());
         if(userDb == null){
-            if (user.getUsername().length() < 5 || user.getPassword().length() < 5) {
+            if (user.getUsername().length() < 2 || user.getPassword().length() < 2) {
                 return new ResponseEntity(HttpStatus.BAD_REQUEST);
             }
             userRepo.save(user);
@@ -29,17 +29,28 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody User user) {
+    public ResponseEntity<User> login(@RequestBody User user) {
         User userDb = userRepo.findByUsername(user.getUsername());
         System.out.println("1");
+        System.out.println(user.getUsername());
+        System.out.println(user.getPassword());
         if (userDb != null) {
             System.out.println("2");
             if (user.getPassword().equals(userDb.getPassword())) {
                 System.out.println("3");
-                return new ResponseEntity(user, HttpStatus.OK);
+                return new ResponseEntity(userDb, HttpStatus.OK);
             }
         }
-        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(null,HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping("/profile/{id}")
+    public ResponseEntity<User> getProfile(@PathVariable Long id) {
+        User user = userRepo.findById(id).get();
+        if (user == null) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
 
