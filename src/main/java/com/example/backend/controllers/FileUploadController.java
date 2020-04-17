@@ -5,6 +5,8 @@ import com.example.backend.repos.UserRepo;
 import org.hibernate.mapping.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,6 +17,9 @@ import software.amazon.awssdk.utils.IoUtils;
 
 import java.io.*;
 import java.lang.reflect.Array;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.UUID;
 
@@ -45,14 +50,6 @@ public class FileUploadController {
         return new ResponseEntity<>("File is uploaded successfully", HttpStatus.OK);
     }
 
-//    @GetMapping
-//    public ResponseEntity<Object> getImage() throws IOException {
-//                String fileName = imgDirPath + userRepo.findById(Integer.toUnsignedLong(1)).get().getAvatar();
-//        InputStream in = getClass()
-//                .getResourceAsStream(fileName);
-//        byte[] array = IoUtils.toByteArray(in);
-//        return new ResponseEntity<>(array, HttpStatus.OK);
-//    }
 
         @GetMapping(produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<Object> getFile(@RequestParam("user_id") Long user_id) throws IOException {
@@ -61,15 +58,9 @@ public class FileUploadController {
         InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
         HttpHeaders headers = new HttpHeaders();
 
-//        headers.add("Content-Disposition", String.format("attachment; filename=\"%s\"", file.getName()));
-//        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
-//        headers.add("Pragma", "no-cache");
-//        headers.add("Expires", "0");
-
-
         ResponseEntity<Object>
                 responseEntity = ResponseEntity.ok().headers(headers).contentLength(file.length()).contentType(
-                MediaType.parseMediaType("mediatype/form-data")).body(resource);
+                MediaType.parseMediaType("image/jpeg")).body(resource);
         return responseEntity;
     }
 
