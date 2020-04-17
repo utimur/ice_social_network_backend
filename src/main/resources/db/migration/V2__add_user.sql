@@ -1,2 +1,2 @@
-INSERT INTO usr(id, username, password)
-            values (1, "user", "123");
+INSERT INTO usr(id, username, password, avatar)
+            values (1, "user", "123", "" );

@@ -23,6 +23,8 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation platform('software.amazon.awssdk:bom:2.5.29')
+	implementation 'software.amazon.awssdk:kinesis'
 	compile('org.flywaydb:flyway-core')
 	runtimeOnly 'mysql:mysql-connector-java'
 	compileOnly 'org.projectlombok:lombok:1.18.10'
