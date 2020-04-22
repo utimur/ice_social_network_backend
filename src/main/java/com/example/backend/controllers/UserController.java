@@ -55,5 +55,13 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    @PostMapping("/profile")
+    public ResponseEntity<User> updateProfile(@RequestBody User user) {
+        System.out.println(user.getEmail());
+        System.out.println(user.getId());
+        System.out.println(user.getUsername());
+        userRepo.save(user);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
 
 }

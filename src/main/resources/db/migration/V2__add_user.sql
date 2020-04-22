@@ -1,2 +1,3 @@
-INSERT INTO usr(id, username, password, avatar)
-            values (1, "user", "123", "" );
+INSERT INTO usr(id, username, password, name, surname, status, email, online)
+            values (1, "user", "123", "Тимур", "Ульби", "Ничего в этой жизни не бывает зря,
+                        ничего в этой жизни не бывает даром", "akva_ten@mail.ru" ,"online" );

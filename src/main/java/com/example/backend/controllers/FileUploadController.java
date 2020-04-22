@@ -50,17 +50,31 @@ public class FileUploadController {
         return new ResponseEntity<>("File is uploaded successfully", HttpStatus.OK);
     }
 
+    @PostMapping("/delete")
+    public ResponseEntity<Object> deleteFile(@RequestBody User user) {
+        System.out.println("sfafasfasfasf");
+        User myUser = userRepo.findById(user.getId()).get();
+        myUser.setAvatar(null);
+        userRepo.save(myUser);
+        return new ResponseEntity<>("succes", HttpStatus.OK);
+    }
+
 
         @GetMapping(produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<Object> getFile(@RequestParam("user_id") Long user_id) throws IOException {
         String fileName = imgDirPath + userRepo.findById(user_id).get().getAvatar();
         File file = new File(fileName);
-        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
-        HttpHeaders headers = new HttpHeaders();
+            ResponseEntity<Object> responseEntity;
+            if (file.exists()) {
+                InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+                HttpHeaders headers = new HttpHeaders();
 
-        ResponseEntity<Object>
                 responseEntity = ResponseEntity.ok().headers(headers).contentLength(file.length()).contentType(
-                MediaType.parseMediaType("image/jpeg")).body(resource);
+                        MediaType.parseMediaType("image/jpeg")).body(resource);
+            } else {
+                responseEntity = new ResponseEntity<>(null, HttpStatus.OK);
+            }
+
         return responseEntity;
     }
 

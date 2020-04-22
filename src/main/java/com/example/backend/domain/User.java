@@ -18,14 +18,38 @@ public class User {
     private String password;
     private String name;
     private String surname;
+    private String email;
+    private String status;
+    private String online;
     private String avatar;
+
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public String getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getOnline() {
+        return online;
+    }
+
+    public void setOnline(String online) {
+        this.online = online;
     }
 
     public String getName() {
@@ -35,6 +59,12 @@ public class User {
     public void setName(String name) {
         this.name = name;
     }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+
 
     public String getSurname() {
         return surname;

@@ -16,7 +16,12 @@ create table usr (
     id bigint not null auto_increment,
     password varchar(255) not null,
     username varchar(255) not null,
-    avatar varchar(255) not null,
+    name varchar(255) not null,
+    surname varchar(255) not null,
+    email varchar(255),
+    avatar varchar(255),
+    status varchar(255),
+    online varchar(255),
     primary key (id)
 ) engine=MyISAM;
 
