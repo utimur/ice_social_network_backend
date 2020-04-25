@@ -2,6 +2,7 @@ package com.example.backend.controllers;
 
 import com.example.backend.domain.User;
 import com.example.backend.repos.UserRepo;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.hibernate.mapping.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.utils.IoUtils;
@@ -36,9 +38,9 @@ public class FileUploadController {
 
     @RequestMapping(method= RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Object> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("user_id") Long user_id) throws IOException {
-        String fileName = UUID.randomUUID().toString() + ".jpg";
         User user = userRepo.findById(user_id).get();
 
+        String fileName = UUID.randomUUID().toString() + ".jpg";
         File convertFile = new File(imgDirPath + fileName);
         convertFile.createNewFile();
         FileOutputStream fout = new FileOutputStream(convertFile);
@@ -60,13 +62,15 @@ public class FileUploadController {
     }
 
 
-        @GetMapping(produces = MediaType.IMAGE_JPEG_VALUE)
+
+        @GetMapping
     public ResponseEntity<Object> getFile(@RequestParam("user_id") Long user_id) throws IOException {
         String fileName = imgDirPath + userRepo.findById(user_id).get().getAvatar();
         File file = new File(fileName);
             ResponseEntity<Object> responseEntity;
             if (file.exists()) {
                 InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+
                 HttpHeaders headers = new HttpHeaders();
 
                 responseEntity = ResponseEntity.ok().headers(headers).contentLength(file.length()).contentType(
@@ -74,7 +78,6 @@ public class FileUploadController {
             } else {
                 responseEntity = new ResponseEntity<>(null, HttpStatus.OK);
             }
-
         return responseEntity;
     }
 
