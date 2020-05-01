@@ -26,6 +26,10 @@ public class User {
     private String status;
     private String online;
     private String avatar;
+    private Long friendsCount;
+    private Long followersCount;
+    private Long followingCount;
+    private Long groupsCount;
 
     @Transient
     private List<User> friends = new ArrayList<>();
@@ -37,7 +41,50 @@ public class User {
     String avatarStr;
     @Transient
     Long friendId;
+    @Transient
+    Boolean isFriend;
 
+
+
+    public Boolean isFriend() {
+        return isFriend;
+    }
+
+    public void setIsFriend(Boolean isFriend) {
+        this.isFriend = isFriend;
+    }
+
+    public Long getFriendsCount() {
+        return friendsCount;
+    }
+
+    public void setFriendsCount(Long friendsCount) {
+        this.friendsCount = friendsCount;
+    }
+
+    public Long getFollowersCount() {
+        return followersCount;
+    }
+
+    public void setFollowersCount(Long followersCount) {
+        this.followersCount = followersCount;
+    }
+
+    public Long getFollowingCount() {
+        return followingCount;
+    }
+
+    public void setFollowingCount(Long followingCount) {
+        this.followingCount = followingCount;
+    }
+
+    public Long getGroupsCount() {
+        return groupsCount;
+    }
+
+    public void setGroupsCount(Long groupsCount) {
+        this.groupsCount = groupsCount;
+    }
 
     public String getEmail() {
         return email;

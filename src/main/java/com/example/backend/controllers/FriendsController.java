@@ -1,8 +1,10 @@
 package com.example.backend.controllers;
 
 
+import com.example.backend.domain.user.Followers;
 import com.example.backend.domain.user.Friends;
 import com.example.backend.domain.user.User;
+import com.example.backend.repos.user.FollowersRepo;
 import com.example.backend.repos.user.FriendsRepo;
 import com.example.backend.repos.user.UserRepo;
 import com.example.backend.service.ImageService;
@@ -27,6 +29,8 @@ public class FriendsController {
     UserRepo userRepo;
     @Autowired
     FriendsRepo friendsRepo;
+    @Autowired
+    FollowersRepo followersRepo;
 
     @PostMapping
     public ResponseEntity<User> addFriend(@RequestBody User user){
@@ -34,10 +38,30 @@ public class FriendsController {
         User friend = userRepo.findById(user.getFriendId()).get();
 
         if (friendsRepo.findByUserIdAndFriendId(myUser.getId(), friend.getId()) == null) {
-            friendsRepo.save(new Friends(myUser.getId(),friend.getId()));
+            if(followersRepo.findByUserIdAndFollowerId(myUser.getId(),friend.getId())==null)
+            {
+                followersRepo.save(new Followers(myUser.getId(), friend.getId()));
+                myUser.setFollowingCount(myUser.getFollowingCount()+1);
+                friend.setFollowersCount(friend.getFollowersCount()+1);
+            }
+            if (followersRepo.findByUserIdAndFollowerId(myUser.getId(), friend.getId()) != null
+                    && followersRepo.findByUserIdAndFollowerId(friend.getId(), myUser.getId()) != null) {
+                friendsRepo.save(new Friends(myUser.getId(),friend.getId()));
+                friendsRepo.save(new Friends(friend.getId(),myUser.getId()));
+                followersRepo.delete(followersRepo.findByUserIdAndFollowerId(myUser.getId(), friend.getId()));
+                followersRepo.delete(followersRepo.findByUserIdAndFollowerId(friend.getId(), myUser.getId()));
+                friend.setIsFriend(true);
+                myUser.setFriendsCount(myUser.getFriendsCount()+1);
+                friend.setFriendsCount(friend.getFriendsCount()+1);
+                myUser.setFollowersCount(myUser.getFollowersCount()-1);
+                myUser.setFollowingCount(myUser.getFollowingCount()-1);
+                friend.setFollowingCount(friend.getFollowingCount()-1);
+                friend.setFollowersCount(friend.getFollowersCount()-1);
+            }
         }
-
-        return new ResponseEntity(friend, HttpStatus.OK);
+        userRepo.save(myUser);
+        userRepo.save(friend);
+        return new ResponseEntity(user, HttpStatus.OK);
     }
 
     @GetMapping
@@ -82,8 +106,60 @@ public class FriendsController {
     @DeleteMapping
     public ResponseEntity<Boolean> deleteFriend(@RequestParam(name = "id") Long id,
                                                 @RequestParam(name = "friend_id") Long friendId) {
-        friendsRepo.delete(friendsRepo.findByUserIdAndFriendId(id, friendId));
+        User myUser = userRepo.findById(id).get();
+        User friend = userRepo.findById(friendId).get();
+
+        if (friendsRepo.findByUserIdAndFriendId(id, friendId) != null) {
+            friendsRepo.delete(friendsRepo.findByUserIdAndFriendId(id, friendId));
+            friendsRepo.delete(friendsRepo.findByUserIdAndFriendId(friendId, id));
+            followersRepo.save(new Followers(friendId, id));
+
+            myUser.setFriendsCount(myUser.getFriendsCount()-1);
+            friend.setFriendsCount(friend.getFriendsCount()-1);
+            myUser.setFollowersCount(myUser.getFollowersCount()+1);
+            friend.setFollowingCount(friend.getFollowingCount()+1);
+        } else {
+            followersRepo.delete(followersRepo.findByUserIdAndFollowerId(id,friendId));
+            myUser.setFollowingCount(myUser.getFollowingCount()-1);
+            friend.setFollowersCount(friend.getFollowersCount()-1);
+        }
+        userRepo.save(myUser);
+        userRepo.save(friend);
         return new ResponseEntity<>(true, HttpStatus.OK);
+    }
+
+    @GetMapping("/following")
+    public ResponseEntity<List<User>> getFollowing(@RequestParam(name = "id") Long id) {
+        List<User> followers = new ArrayList<>();
+
+        List<Followers> followersIds = followersRepo.findFollowersByUserId(id);
+        for (Followers follower:followersIds) {
+            String avatar = imgDirPath + userRepo.findById(follower.getFollowerId()).get().getAvatar();
+            User user = userRepo.findById(follower.getFollowerId()).get();
+            File avatarFile = new File(avatar);
+            if (avatarFile.exists()) {
+                user.setAvatarStr(ImageService.encodeFileToBase64Binary(avatarFile));
+            }
+            followers.add(user);
+        }
+        return new ResponseEntity<>(followers, HttpStatus.OK);
+    }
+
+    @GetMapping("/followers")
+    public ResponseEntity<List<User>> getFollowers(@RequestParam(name = "id") Long id) {
+        List<User> followers = new ArrayList<>();
+
+        List<Followers> followersIds = followersRepo.findFollowersByFollowerId(id);
+        for (Followers follower:followersIds) {
+            String avatar = imgDirPath + userRepo.findById(follower.getUserId()).get().getAvatar();
+            User user = userRepo.findById(follower.getUserId()).get();
+            File avatarFile = new File(avatar);
+            if (avatarFile.exists()) {
+                user.setAvatarStr(ImageService.encodeFileToBase64Binary(avatarFile));
+            }
+            followers.add(user);
+        }
+        return new ResponseEntity<>(followers, HttpStatus.OK);
     }
 
 }

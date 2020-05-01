@@ -20,7 +20,7 @@ create table usr (
     surname varchar(255) not null,
     email varchar(255),
     avatar varchar(255),
-    status varchar(255),
+    status varchar(512),
     online varchar(255),
     primary key (id)
 ) engine=MyISAM;
