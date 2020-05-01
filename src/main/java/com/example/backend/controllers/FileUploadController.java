@@ -1,28 +1,17 @@
 package com.example.backend.controllers;
 
-import com.example.backend.domain.User;
-import com.example.backend.repos.UserRepo;
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.hibernate.mapping.Collection;
+import com.example.backend.domain.user.User;
+import com.example.backend.repos.user.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.utils.IoUtils;
 
 import java.io.*;
-import java.lang.reflect.Array;
-import java.net.MalformedURLException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.UUID;
 
 

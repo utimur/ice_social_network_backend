@@ -1,13 +1,14 @@
 package com.example.backend.controllers;
 
 import com.example.backend.domain.post.Post;
-import com.example.backend.domain.User;
+import com.example.backend.domain.user.User;
 import com.example.backend.domain.post.PostComments;
 import com.example.backend.domain.post.PostLikes;
 import com.example.backend.repos.post.PostCommentsRepo;
 import com.example.backend.repos.post.PostRepo;
-import com.example.backend.repos.UserRepo;
+import com.example.backend.repos.user.UserRepo;
 import com.example.backend.repos.post.PostLikesRepo;
+import com.example.backend.service.ImageService;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -146,12 +147,23 @@ public class PostController {
         return new ResponseEntity(comment, HttpStatus.OK);
     }
 
+    @DeleteMapping("/comments")
+    public ResponseEntity deleteComment(@RequestParam Long id) {
+        PostComments postComments = postCommentsRepo.findById(id).get();
+        Post post = postRepo.findById(postComments.getPostId()).get();
+        postCommentsRepo.deleteById(id);
+        post.setComments(post.getComments()-1);
+        postRepo.save(post);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+
     private void setComment(PostComments comment) {
         String avatar = imgDirPath + userRepo.findById(comment.getUserId()).get().getAvatar();
 
         File avatarFile = new File(avatar);
         if (avatarFile.exists()) {
-            comment.setAvatar(encodeFileToBase64Binary(avatarFile));
+            comment.setAvatar(ImageService.encodeFileToBase64Binary(avatarFile));
         }
         User user = userRepo.findById(comment.getUserId()).get();
         comment.setUsername(user.getSurname() + " " + user.getName());
@@ -161,30 +173,14 @@ public class PostController {
         String avatar = imgDirPath + userRepo.findById(post.getCreatorId()).get().getAvatar();
         File avatarFile = new File(avatar);
         if (avatarFile.exists()) {
-            post.setAvatar(encodeFileToBase64Binary(avatarFile));
+            post.setAvatar(ImageService.encodeFileToBase64Binary(avatarFile));
         }
 
         String imgPath = imgDirPath + post.getImg();
         File postImg = new File(imgPath);
         if (postImg.exists()) {
-            post.setPostImg(encodeFileToBase64Binary(postImg));
+            post.setPostImg(ImageService.encodeFileToBase64Binary(postImg));
         }
     }
-    private static String encodeFileToBase64Binary(File file){
-        String encodedfile = null;
-        try {
-            FileInputStream fileInputStreamReader = new FileInputStream(file);
-            byte[] bytes = new byte[(int)file.length()];
-            fileInputStreamReader.read(bytes);
-            encodedfile = new String(Base64.encodeBase64(bytes), "UTF-8");
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
 
-        return encodedfile;
-    }
 }

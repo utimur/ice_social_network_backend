@@ -1,9 +1,13 @@
-package com.example.backend.domain;
+package com.example.backend.domain.user;
 
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "usr")
@@ -23,6 +27,17 @@ public class User {
     private String online;
     private String avatar;
 
+    @Transient
+    private List<User> friends = new ArrayList<>();
+    @Transient
+    private List<User> followers = new ArrayList<>();
+    @Transient
+    private List<User> following = new ArrayList<>();
+    @Transient
+    String avatarStr;
+    @Transient
+    Long friendId;
+
 
     public String getEmail() {
         return email;
@@ -30,6 +45,30 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Long getFriendId() {
+        return friendId;
+    }
+
+    public String getAvatarStr() {
+        return avatarStr;
+    }
+
+    public void setAvatarStr(String avatarStr) {
+        this.avatarStr = avatarStr;
+    }
+
+    public void setFriendId(Long friendId) {
+        this.friendId = friendId;
+    }
+
+    public List<User> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(List<User> friends) {
+        this.friends = friends;
     }
 
     public String getAvatar() {
@@ -96,6 +135,22 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<User> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(List<User> followers) {
+        this.followers = followers;
+    }
+
+    public List<User> getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(List<User> following) {
+        this.following = following;
     }
 
     public User() {

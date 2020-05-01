@@ -1,14 +1,12 @@
 package com.example.backend.controllers;
 
 
-import com.example.backend.domain.User;
-import com.example.backend.repos.UserRepo;
+import com.example.backend.domain.user.User;
+import com.example.backend.repos.user.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @CrossOrigin
