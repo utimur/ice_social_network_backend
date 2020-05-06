@@ -3,14 +3,18 @@ package com.example.backend.controllers;
 
 import com.example.backend.domain.user.User;
 import com.example.backend.repos.user.UserRepo;
+import com.example.backend.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+
 @RestController
 @CrossOrigin
 public class UserController {
+    String imgDirPath = "C:\\Users\\tim\\Desktop\\23.02.20_react_spring_app\\backend\\src\\main\\resources\\static\\img\\";
 
     @Autowired
     private UserRepo userRepo;
@@ -38,6 +42,11 @@ public class UserController {
         User userDb = userRepo.findByUsername(user.getUsername());
         if (userDb != null) {
             if (user.getPassword().equals(userDb.getPassword())) {
+                String avatar = imgDirPath + userDb.getAvatar();
+                File avatarFile = new File(avatar);
+                if (avatarFile.exists()) {
+                    userDb.setAvatarStr(ImageService.encodeFileToBase64Binary(avatarFile));
+                }
                 return new ResponseEntity(userDb, HttpStatus.OK);
             }
         }
@@ -50,6 +59,11 @@ public class UserController {
         if (user == null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
+        String avatar = imgDirPath + user.getAvatar();
+        File avatarFile = new File(avatar);
+        if (avatarFile.exists()) {
+            user.setAvatarStr(ImageService.encodeFileToBase64Binary(avatarFile));
+        }
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
@@ -58,6 +72,7 @@ public class UserController {
         System.out.println(user.getEmail());
         System.out.println(user.getId());
         System.out.println(user.getUsername());
+        ImageService.setAvatarStr(user);
         userRepo.save(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }

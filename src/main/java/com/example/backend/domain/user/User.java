@@ -1,6 +1,8 @@
 package com.example.backend.domain.user;
 
 
+import com.example.backend.domain.dialog.Dialog;
+import com.example.backend.domain.dialog.Message;
 import com.fasterxml.jackson.annotation.*;
 
 import javax.persistence.*;
@@ -31,6 +33,14 @@ public class User {
     private Long followingCount;
     private Long groupsCount;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<Message> messages;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<Dialog> dialogs;
+
     @Transient
     private List<User> friends = new ArrayList<>();
     @Transient
@@ -44,7 +54,13 @@ public class User {
     @Transient
     Boolean isFriend;
 
+    public List<Dialog> getDialogs() {
+        return dialogs;
+    }
 
+    public void setDialogs(List<Dialog> dialogs) {
+        this.dialogs = dialogs;
+    }
 
     public Boolean isFriend() {
         return isFriend;
@@ -52,6 +68,14 @@ public class User {
 
     public void setIsFriend(Boolean isFriend) {
         this.isFriend = isFriend;
+    }
+
+    public List<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
     }
 
     public Long getFriendsCount() {
