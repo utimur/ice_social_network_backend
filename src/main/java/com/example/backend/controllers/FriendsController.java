@@ -95,7 +95,9 @@ public class FriendsController {
     @GetMapping("/find")
     public ResponseEntity<Boolean> findFriend(@RequestParam(name = "id") Long id,
                                               @RequestParam(name = "friend_id") Long friendId) {
-        if (friendsRepo.findByUserIdAndFriendId(id, friendId) != null) {
+        System.out.println("find");
+        if (friendsRepo.findByUserIdAndFriendId(id, friendId) != null
+                || followersRepo.findByUserIdAndFollowerId(id, friendId) != null) {
             return new ResponseEntity<>(true, HttpStatus.OK);
         }
         else {

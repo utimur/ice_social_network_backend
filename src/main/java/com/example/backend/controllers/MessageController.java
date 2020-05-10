@@ -64,7 +64,7 @@ public class MessageController {
         dialog.setLastMessageDate(formatForDateNow.format(dateNow));
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-q        dialogRepo.save(dialog);
+        dialogRepo.save(dialog);
 
         Message message = new Message(dialogId,
                 userRepo.findById(userId).get(),

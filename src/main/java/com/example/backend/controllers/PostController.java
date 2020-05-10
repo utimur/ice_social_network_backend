@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
@@ -40,8 +41,7 @@ public class PostController {
     public ResponseEntity<Object> addPost(@RequestParam(value = "img", required = false) MultipartFile img,
                                           @RequestParam("user_id") Long user_id,
                                           @RequestParam("creator_id") Long creator_id,
-                                          @RequestParam("text") String text,
-                                          @RequestParam("creation") String creation) throws IOException {
+                                          @RequestParam("text") String text) throws IOException {
         Post post = new Post();
 
         if(img != null) {
@@ -59,10 +59,14 @@ public class PostController {
         post.setName(creator.getName());
         post.setSurname(creator.getSurname());
         post.setText(text);
-        post.setCreation(creation);
         post.setLikes(new Long(0));
         post.setReposts(new Long(0));
         post.setComments(new Long(0));
+
+        Date dateNow = new Date();
+        SimpleDateFormat formatForDateNow = new SimpleDateFormat("dd.MM.yyy hh:mm");
+
+        post.setCreation(formatForDateNow.format(dateNow));
 
         setPostFile(post);
 

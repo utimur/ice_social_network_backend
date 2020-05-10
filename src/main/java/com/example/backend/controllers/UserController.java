@@ -69,12 +69,11 @@ public class UserController {
 
     @PostMapping("/profile")
     public ResponseEntity<User> updateProfile(@RequestBody User user) {
-        System.out.println(user.getEmail());
-        System.out.println(user.getId());
-        System.out.println(user.getUsername());
-        ImageService.setAvatarStr(user);
-        userRepo.save(user);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        User dbUser = userRepo.findById(user.getId()).get();
+        dbUser.setStatus(user.getStatus());
+        ImageService.setAvatarStr(dbUser);
+        userRepo.save(dbUser);
+        return new ResponseEntity<>(dbUser, HttpStatus.OK);
     }
 
 }
